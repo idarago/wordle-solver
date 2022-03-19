@@ -45,7 +45,7 @@ if __name__ == "__main__":
     allowed_openings, frequencies = load_chessle_data()
 
     # Calculate the entropy of each opening for the top 10000 most frequent openings
-    print(openings_by_entropy(allowed_openings= allowed_openings[:10000], frequencies=frequencies))
+    #print(openings_by_entropy(allowed_openings= allowed_openings[:10000], frequencies=frequencies))
     
     # Play Chessle (https://jackli.gg/chessle/) manually, input the result you get from the game for the guess
     guesser = ChessGuesser(allowed_openings, frequencies)

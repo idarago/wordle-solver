@@ -159,8 +159,8 @@ class WordGuesser:
 
     def strategy_1(self):
         # Completely random choice for the word as long as it's allowed, weighted by the frequency of the words
-        total = sum(frequencies[w] for w in self.allowed_words)
-        probabilities = [frequencies[w]/total for w in self.allowed_words]
+        total = sum(self.frequencies[w] for w in self.allowed_words)
+        probabilities = [self.frequencies[w]/total for w in self.allowed_words]
         return np.random.choice(self.allowed_words, p=probabilities)
 
     def strategy_2(self):

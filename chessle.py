@@ -74,14 +74,50 @@ class ChessGuesser:
                 new_allowed_openings.append(candidate)
         return new_allowed_openings
 
-    def guess(self):
+    def guess(self, val=4):
         self.allowed_openings = self.prune_moves(self.guesses, self.colors)
+        if val == 2:
+            guess = self.strategy_2()
+        elif val == 3:
+            guess = self.strategy_3()
+        elif val == 4:
+            guess = self.strategy_4()
+        else:
+            guess = self.strategy_1()
+        print(f"Based on the current information, the guess is \n{self.guesses[-1]}")
+        return guess
+
+    def strategy_1(self):
+        # Completely random choice for the opening as long as it's allowed, weighted by the frequency of the opening
         total = sum(self.frequencies[w] for w in self.allowed_openings)
         probabilities = [self.frequencies[w]/total for w in self.allowed_openings]
-        if len(self.allowed_openings) > 0:
-            self.guesses.append(np.random.choice(self.allowed_openings, p=probabilities))
-            print(f"Based on the current information, the guess is \n{self.guesses[-1]}")
+        self.guesses.append(np.random.choice(self.allowed_openings, p=probabilities))
+        return self.guesses[-1]
+
+    def strategy_2(self):
+        # Returns the word that maximizes entropy for the current list of allowed words
+        entropy = entropy_guesses(self.allowed_openings, self.frequencies, "chessle")
+        max_val = list(entropy.values())
+        max_key = list(entropy.keys())
+        self.guesses.append(max_key[max_val.index(max(max_val))])
+        return self.guesses[-1]
+
+    def strategy_3(self):
+        # Choose the word that maximizes entropy for the first round: "tares", then chooses at random
+        if len(self.guesses)==0:
+            self.guesses.append("e4 e5 Nf3 Nc6 Bc4 Be7 Nc3 Nf6 d4 d6")
             return self.guesses[-1]
+        else:
+            return self.strategy_1()
+
+    def strategy_4(self):
+        # Same as strategy_2, but precomputes the first step
+        if len(self.guesses)==0:
+            self.guesses.append("e4 e5 Nf3 Nc6 Bc4 Be7 Nc3 Nf6 d4 d6")
+            return self.guesses[-1]
+        else:
+            return self.strategy_2()
+
 
     def play(self):
         turn = 0
